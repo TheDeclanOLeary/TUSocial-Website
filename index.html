@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media API Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, button, textarea {
+            margin-top: 5px;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Media API Interface</h1>
+
+    <h2>Create User</h2>
+    <form id="create-user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="submit">Create User</button>
+    </form>
+
+    <h2>Get All Users</h2>
+    <button id="get-users">Fetch All Users</button>
+
+    <h2>Create Post</h2>
+    <form id="create-post-form">
+        <label for="content">Post Content:</label>
+        <textarea id="content" name="content" required></textarea>
+        
+        <label for="userID">User ID:</label>
+        <input type="number" id="userID" name="userID" required>
+        
+        <button type="submit">Create Post</button>
+    </form>
+
+    <h2>Get All Posts</h2>
+    <button id="get-posts">Fetch All Posts</button>
+
+    <div id="response-container" class="response" style="display: none;"></div>
+
+    <script>
+        const BASE_URL = "https://45ca-129-244-19-91.ngrok-free.app"; // Change this if deployed elsewhere
+
+        const responseContainer = document.getElementById("response-container");
+
+        function displayResponse(response) {
+            responseContainer.style.display = "block";
+            responseContainer.textContent = JSON.stringify(response, null, 2);
+        }
+
+        // Create User
+        document.getElementById("create-user-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch(`${BASE_URL}/users`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username, email, password }),
+                });
+                const data = await response.json();
+                displayResponse(data);
+            } catch (error) {
+                console.error(error);
+                displayResponse({ error: "Failed to create user." });
+            }
+        });
+
+        // Fetch All Users
+        document.getElementById("get-users").addEventListener("click", async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/users`);
+                const data = await response.json();
+                displayResponse(data);
+            } catch (error) {
+                console.error(error);
+                displayResponse({ error: "Failed to fetch users." });
+            }
+        });
+
+        // Create Post
+        document.getElementById("create-post-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const content = document.getElementById("content").value;
+            const userID = document.getElementById("userID").value;
+
+            try {
+                const response = await fetch(`${BASE_URL}/posts`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ content, userID }),
+                });
+                const data = await response.json();
+                displayResponse(data);
+            } catch (error) {
+                console.error(error);
+                displayResponse({ error: "Failed to create post." });
+            }
+        });
+
+        // Fetch All Posts
+        document.getElementById("get-posts").addEventListener("click", async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/posts`);
+                const data = await response.json();
+                displayResponse(data);
+            } catch (error) {
+                console.error(error);
+                displayResponse({ error: "Failed to fetch posts." });
+            }
+        });
+    </script>
+</body>
+</html>
